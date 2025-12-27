@@ -76,3 +76,39 @@ Simulate the real APCS exam environment.
     1.  Click **"✨ AI Generate"**.
     2.  Enter a topic (e.g., "Graph Theory", "DFS").
     3.  The system will generate the description and test cases automatically.
+
+---
+
+## 👨‍💻 Developer Guide (Resuming Work)
+If you want to switch back to the Workspace and continue development, follow these steps:
+
+### 1. Start the Database
+The database runs in Docker. Ensure Docker Desktop is running.
+```bash
+# Start the existing database container
+docker start apcs-db
+```
+*(If the container is missing, run `docker run --name apcs-db -e POSTGRES_PASSWORD=password -e POSTGRES_DB=apcs_db -p 5433:5432 -d postgres:15-alpine`)*
+
+### 2. Start the Backend Server
+Open a terminal in the project root:
+```bash
+cd server
+export POSTGRES_PORT=5433
+export POSTGRES_DB=apcs_db
+export POSTGRES_USER=postgres
+export POSTGRES_PASSWORD=password
+# (Ensure GEMINI_API_KEY is in your .env or exported)
+npm install # Install deps if needed
+node index.js
+```
+*Server runs on `http://localhost:3000`*
+
+### 3. Start the Frontend Client
+Open a **new** terminal tab:
+```bash
+cd client
+npm install # Install deps if needed
+npm run dev
+```
+*Client runs on `http://localhost:5173`*
