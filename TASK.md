@@ -1,0 +1,54 @@
+# Task: Develop APCS Practice Platform
+
+- [x] Plan APCS Practice Platform <!-- id: 0 -->
+    - [x] Research Exam Structure & Sources <!-- id: 1 -->
+    - [x] Create Requirements Specification <!-- id: 2 -->
+    - [x] User Review & Strategy Approval <!-- id: 3 -->
+- [x] Phase 1: Foundation <!-- id: 10 -->
+    - [x] Project Scaffolding (Client/Server) <!-- id: 11 -->
+    - [x] UI Design System (Tailwind + Base Components) <!-- id: 12 -->
+    - [x] Backend API Basic Structure <!-- id: 13 -->
+    - [x] Database Setup (PostgreSQL) <!-- id: 14 -->
+- [x] Phase 2: Concept Mode (Quiz) <!-- id: 20 -->
+    - [x] Database Schema for Questions <!-- id: 21 -->
+    - [x] Make Schema Applied <!-- id: 24 -->
+    - [x] Admin: Concept Question Entry Form <!-- id: 22 -->
+    - [x] Student: Quiz UI & Logic <!-- id: 23 -->
+- [x] Phase 3: Implementation Mode (Coding) <!-- id: 30 -->
+    - [x] Integrate Monaco Editor <!-- id: 31 -->
+    - [x] Problem View UI (Markdown Support) <!-- id: 32 -->
+    - [x] Seed Implementation Data <!-- id: 34 -->
+    - [x] Judge Integration (Judge0 / Sandbox) <!-- id: 33 -->
+        - [x] Pull Compiler Images <!-- id: 35 -->
+        - [x] Implement Runner Service (Python) <!-- id: 36 -->
+        - [x] Connect API to Runner <!-- id: 37 -->
+- [x] Phase 5: Authentication & Users <!-- id: 40 -->
+    - [x] JWT Login Backend / Frontend <!-- id: 41 -->
+    - [x] User Profile & History UI <!-- id: 42 -->
+- [x] Phase 6: Advanced Judge Features <!-- id: 50 -->
+    - [x] C/C++ Support (GCC) <!-- id: 51 -->
+    - [x] Hidden Test Case Evaluation <!-- id: 52 -->
+- [x] Phase 7: Mock Exam Mode <!-- id: 60 -->
+    - [x] Standard Exam Timer Logic <!-- id: 61 -->
+    - [x] Exam Result Report <!-- id: 62 -->
+- [x] Phase 8: Analytics & Dashboard <!-- id: 70 -->
+    - [x] Install Chart Library (Chart.js) <!-- id: 71 -->
+    - [x] Backend: Aggregation Queries <!-- id: 72 -->
+    - [x] UI: Visualize User Progress <!-- id: 73 -->
+- [x] Phase 9: Community & Discussions <!-- id: 80 -->
+    - [x] Comments Table Schema <!-- id: 81 -->
+    - [x] Discussion UI per Problem <!-- id: 82 -->
+- [x] Phase 10: AI Tutor (Real Gemini) <!-- id: 90 -->
+    - [x] Install `@google/generative-ai` <!-- id: 91 -->
+    - [x] Backend: Hint API with Prompt Engineering <!-- id: 92 -->
+    - [x] UI: "AI Hint" Button & Loading State <!-- id: 93 -->
+- [x] Phase 11: AI Question Generator (Admin) <!-- id: 110 -->
+    - [x] Backend: Concept Generation API (`/api/ai/generate-question`) <!-- id: 111 -->
+    - [x] UI: "Generate with AI" in `AdminConcept.vue` <!-- id: 112 -->
+    - [x] UI: Create `AdminProblem.vue` (Implementation Question Form) <!-- id: 113 -->
+    - [x] Backend: Implementation Generation API (`/api/ai/generate-implementation`) <!-- id: 114 -->
+    - [x] UI: "Generate with AI" in `AdminProblem.vue` <!-- id: 115 -->
+- [x] Phase 12: Deployment <!-- id: 100 -->
+    - [x] Dockerfile for Client and Server <!-- id: 101 -->
+    - [x] docker-compose.yml for Full Stack <!-- id: 102 -->
+    - [x] GitHub Actions CI Workflow <!-- id: 103 -->
