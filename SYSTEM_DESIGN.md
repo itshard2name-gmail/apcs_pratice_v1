@@ -26,7 +26,8 @@
     *   **Flow**: User submits code -> Backend retrieves Test Cases -> Backend executes code against inputs -> Compares outputs -> Returns Verdict (AC/WA/TLE/RE).
 *   **AI Tutor (`routes/ai.js`)**:
     *   Integrates Google Gemini (`gemini-flash-latest`).
-    *   **Features**: Code Hints (without giving answers), Question Generation (JSON output).
+    *   **Features**: Code Hints (without giving answers), Question Generation (Single & Batch JSON output).
+    *   **Batch Generation**: Supports generating sets of Concept Questions or Coding Problems with random topic selection.
 *   **Authentication**:
     *   JWT-based (Access Token).
     *   Bcrypt for password hashing (10 rounds).
