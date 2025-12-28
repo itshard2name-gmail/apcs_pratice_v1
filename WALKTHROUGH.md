@@ -34,3 +34,20 @@ This platform is a full-stack web application designed to help students practice
 ## 5. Next Steps
 - **Monitoring**: Watch for any 429 Rate Limit errors from Gemini if usage spikes.
 - **UI Polish**: Enhance the "Loading" states for AI generation with better skeletons or progress bars.
+## 4. Question Bank LLM Integration (Batch Generation)
+**Objective**: Accelerate question bank population.
+
+**Features**:
+1.  **Bulk Concept Generation**:
+    - Generates 3, 5, or 10 multiple-choice questions at once.
+    - **Topics**: Pick specific APCS topics (e.g., Recursion) or "Random (Mixed)" for variety.
+    - **Review UI**: Inspect generated questions, edit them if needed, or save them to the DB directly.
+
+2.  **Bulk Coding Problem Generation**:
+    - Generates up to 3 full coding problems with test cases.
+    - Supports random topic selection from algorithms (Sorting, DP, Greedy, etc.).
+    - Includes Title, Markdown Description, and Test Cases.
+
+**Verification**:
+- Use `curl` or the Admin UI to generate batches.
+- Confirm "Random" mode produces diverse topics.

@@ -134,4 +134,140 @@ router.post('/generate-implementation', authenticateToken, async (req, res) => {
     }
 });
 
+const TOPICS = [
+    "Basic IO & Variables",
+    "Control Structures",
+    "Arrays & Strings",
+    "Functions & Recursion",
+    "Pointers & Memory",
+    "Data Structures",
+    "Algorithms"
+];
+
+router.post('/generate-batch', authenticateToken, async (req, res) => {
+    let { topic, count } = req.body;
+    count = parseInt(count) || 3;
+    if (count > 10) count = 10; // Cap max questions
+    if (count < 1) count = 1;
+
+    try {
+        let promptContext = "";
+
+        if (topic) {
+            promptContext = `Generate ${count} APCS (Advanced Placement Computer Science) concept questions about "${topic}".`;
+        } else {
+            // Randomly select topics for each question
+            const selectedTopics = [];
+            for (let i = 0; i < count; i++) {
+                const randomTopic = TOPICS[Math.floor(Math.random() * TOPICS.length)];
+                selectedTopics.push(randomTopic);
+            }
+            promptContext = `Generate ${count} APCS concept questions. Cover these topics in order:\n` +
+                selectedTopics.map((t, i) => `${i + 1}. ${t}`).join('\n');
+        }
+
+        const prompt = `
+        ${promptContext}
+        
+        Output STRICT JSON format as a LIST (Array) of objects.
+        Each object must match this schema:
+        {
+          "title": "Short Title",
+          "content": "Question description... code dump if needed...",
+          "code_snippet": "int func(int n) { ... }", (Optional, empty string if not needed)
+          "options": ["Option A", "Option B", "Option C", "Option D"],
+          "answer_index": 0,
+          "explanation": "Why A is correct..."
+        }
+
+        Do not use markdown formatting in the output (no \`\`\`json). Just raw JSON string.
+        `;
+
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
+        const jsonText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        const data = JSON.parse(jsonText);
+
+        // Ensure it's an array
+        const questions = Array.isArray(data) ? data : [data];
+        res.json(questions);
+
+    } catch (error) {
+        console.error("AI Batch Gen Error:", error);
+        if (error.status === 429) {
+            return res.status(429).json({ error: "AI Rate Limit. Try fewer questions or wait." });
+        }
+        res.status(500).json({ error: "Failed to generate batch questions." });
+    }
+});
+
+const TOPICS_IMPL = [
+    "Basic Input/Output",
+    "Conditional Logic",
+    "Loops & Patterns",
+    "Arrays & 2D Arrays",
+    "String Manipulation",
+    "Recursive Functions",
+    "Sorting Algorithms",
+    "Searching Algorithms",
+    "Greedy Algorithms",
+    "Dynamic Programming (Basic)"
+];
+
+router.post('/generate-implementation-batch', authenticateToken, async (req, res) => {
+    let { topic, count } = req.body;
+    count = parseInt(count) || 1;
+    if (count > 3) count = 3; // Cap max coding problems (expensive/slow)
+    if (count < 1) count = 1;
+
+    try {
+        let promptContext = "";
+
+        if (topic) {
+            promptContext = `Generate ${count} APCS (Advanced Placement Computer Science) coding problems about "${topic}".`;
+        } else {
+            // Randomly select topics
+            const selectedTopics = [];
+            for (let i = 0; i < count; i++) {
+                const randomTopic = TOPICS_IMPL[Math.floor(Math.random() * TOPICS_IMPL.length)];
+                selectedTopics.push(randomTopic);
+            }
+            promptContext = `Generate ${count} APCS coding problems. Cover these topics in order:\n` +
+                selectedTopics.map((t, i) => `${i + 1}. ${t}`).join('\n');
+        }
+
+        const prompt = `
+        ${promptContext}
+        
+        Output STRICT JSON format as a LIST (Array) of objects.
+        Each object must match this schema:
+        {
+          "title": "Problem Title",
+          "description": "# Problem Description\\nWrite a program...\\n\\n## Input\\n...\\n\\n## Output\\n...",
+          "test_cases": [
+            { "input": "...", "output": "...", "is_sample": true }
+          ]
+        }
+        
+        Do not use markdown formatting in the output (no \`\`\`json). Just raw JSON string.
+        Ensure the description is in Markdown format.
+        `;
+
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
+        const jsonText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        const data = JSON.parse(jsonText);
+
+        const problems = Array.isArray(data) ? data : [data];
+        res.json(problems);
+
+    } catch (error) {
+        console.error("AI Impl Batch Gen Error:", error);
+        if (error.status === 429) {
+            return res.status(429).json({ error: "AI Rate Limit. Wait and try again." });
+        }
+        res.status(500).json({ error: "Failed to generate problems." });
+    }
+});
+
 module.exports = router;

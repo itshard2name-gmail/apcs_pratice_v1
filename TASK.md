@@ -54,3 +54,10 @@
     - [x] GitHub Actions CI Workflow <!-- id: 103 -->
 - [x] Refinement 2025-12-28 <!-- id: 120 -->
     - [x] Refine AI Question Generator Prompts to prevent Chain-of-Thought leakage in output <!-- id: 121 -->
+- [/] Question Bank LLM Integration <!-- id: 130 -->
+    - [x] Backend: Bulk Generate API (`/api/ai/generate-batch`) <!-- id: 132 -->
+    - [x] Frontend: Bulk Generate UI in `AdminConcept.vue` <!-- id: 133 -->
+    - [x] Backend: Bulk Generate Impl API (`/api/ai/generate-implementation-batch`) <!-- id: 134 -->
+    - [x] Frontend: Bulk Generate UI in `AdminProblem.vue` <!-- id: 135 -->
+    - [ ] (Deferred) PDF Text Parsing <!-- id: 131 -->
+

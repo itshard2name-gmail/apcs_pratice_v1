@@ -160,3 +160,63 @@ TOKEN=$(curl -s -X POST http://localhost:3000/api/auth/login -H "Content-Type: a
 curl -s -X POST http://localhost:3000/api/ai/generate-question -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{"topic": "Recursion"}'
 ```
 - Verify no ` ```json ` fences are present in the output.
+
+## 9. Question Bank LLM Integration (branch: feature/question_bank_llm)
+### Goal
+Enhance the "Admin" capabilities to rapidly build the question bank using LLMs.
+
+### Proposed Changes
+#### Backend
+- `server/routes/ai.js`:
+    - **[DEFERRED]** Endpoint: `/api/ai/parse-pdf-text` (Mock/Text based first).
+    - **[NEW]** Endpoint: `/api/ai/generate-batch` -> 
+        - Input: `topic` (optional, String) + `count` (optional, default 3, Integer).
+        - Logic: 
+            - If `topic` is provided: Generate `count` questions on that topic.
+            - If `topic` is EMPTY: For each of the `count` questions, randomly select a topic from a predefined list (e.g., Arrays, Recursion, Pointers) to ensure variety.
+        - Output: List of JSON questions.
+
+#### Frontend
+- `client/src/views/AdminConcept.vue`:
+    - Add "Bulk Generate" button/modal.
+    - **UI Inputs**:
+        - **Topic**: (Optional) Dropdown with "Random (Mixed Topics)" as default.
+            - **Curated List**: 
+                - Basic IO & Variables
+                - Control Structures (If/Else, Loops)
+                - Arrays & Strings
+                - Functions & Recursion
+                - Pointers & Memory
+                - Data Structures (Stack, Queue, Tree)
+                - Algorithms (Sorting, Searching, Greedy, DP)
+            - Allow "Other" (Manual Entry).
+        - **Quantity**: (Dropdown: 3, 5, 10).
+    - **Display**: Show generated questions in a list for review before saving to DB.
+
+### Verification Plan
+- **Manual Test**:
+    - Login as Admin.
+    - **Scenario A (Specific Topic)**: Select "Recursion", Count: 3. Verify 3 Recursion questions.
+    - **Scenario B (Random)**: Select "Random", Count: 5. Verify 5 questions from DIFFERENT topics.
+    - Save them and verify they appear in the database/list.
+
+## 9.1 Bulk Generate for Implementation Problems
+### Goal
+Extend bulk generation to "Coding Problems" (Implementation Mode).
+
+### Proposed Changes
+#### Backend
+- `server/routes/ai.js`:
+    - **[NEW]** Endpoint: `/api/ai/generate-implementation-batch` -> 
+        - Input: `topic` (optional) + `count`.
+        - Logic: Similar to concept batch, but generates full coding problems with test cases.
+        - **Note**: Generating 10 coding problems is slow/expensive. Cap at 3 for now.
+
+#### Frontend
+- `client/src/views/AdminProblem.vue`:
+    - Replicate the "Bulk Generate" UI from `AdminConcept.vue`.
+    - Adapt the "Review List" to show Problem Title + Brief Description.
+
+### Verification Plan
+- Generate 2 Coding Problems on "Arrays".
+- Verify they have Description and Test Cases.
