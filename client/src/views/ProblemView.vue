@@ -11,7 +11,6 @@ const auth = useAuthStore()
 
 const route = useRoute()
 const question = ref(null)
-// userCode declaration removed from here
 const outputLog = ref('')
 const selectedLang = ref('c')
 const executing = ref(false)
@@ -30,6 +29,7 @@ watch(selectedLang, (newLang) => {
         userCode.value = templates[newLang]
     }
 })
+
 // Discussion State
 const activeTab = ref('description') // 'description' or 'discussion'
 const comments = ref([])
@@ -48,7 +48,6 @@ const md = markdownit({
 
 const renderedContent = computed(() => {
   if (!question.value) return ''
-  return md.render(question.value.description)
   return md.render(question.value.description)
 })
 
@@ -187,103 +186,142 @@ const submitCode = async () => {
 
 <template>
   <div class="h-[calc(100vh-64px)] flex flex-col md:flex-row overflow-hidden">
-    <!-- Left Panel: Problem Description -->
-    <div class="w-full md:w-1/2 p-6 overflow-y-auto border-r border-gray-200 bg-white">
-      <div v-if="question">
-        <div class="flex items-center justify-between mb-4 border-b border-gray-200">
-             <div class="flex space-x-4">
-                 <button 
-                  @click="activeTab = 'description'"
-                  class="pb-2 px-1 font-medium text-sm"
-                  :class="activeTab === 'description' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'">
-                  Description
-                 </button>
-                 <button 
-                  @click="activeTab = 'discussion'"
-                  class="pb-2 px-1 font-medium text-sm"
-                  :class="activeTab === 'discussion' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'">
-                  Discussion
-                 </button>
+    <!-- Left Panel: Problem Content -->
+    <div class="w-full md:w-1/2 flex flex-col border-r border-gray-200 bg-white">
+      <!-- Problem Header (Sticky) -->
+      <div class="px-6 pt-6 pb-2 border-b border-gray-100 bg-white z-10" v-if="question">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ question.title }}</h1>
+        <div class="flex items-center gap-4 text-xs font-mono text-gray-500 mb-4">
+             <div class="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded">
+               <span>⏱️ Time:</span>
+               <span class="font-bold text-gray-700">{{ question.time_limit }}ms</span>
+             </div>
+             <div class="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded">
+               <span>💾 Memory:</span>
+               <span class="font-bold text-gray-700">{{ question.memory_limit }}MB</span>
              </div>
         </div>
-
-        <div v-show="activeTab === 'description'">
-            <h1 class="text-2xl font-bold mb-4">{{ question.title }}</h1>
-            <div class="space-y-2 mb-4 text-sm text-gray-600">
-               <span class="mr-4">⏱️ Time: {{ question.time_limit }}ms</span>
-               <span>💾 Memory: {{ question.memory_limit }}MB</span>
-            </div>
-            <div class="prose max-w-none" v-html="renderedContent"></div>
+        
+        <!-- Tabs -->
+        <div class="flex gap-6 border-b border-gray-200 -mb-px">
+           <button 
+            @click="activeTab = 'description'"
+            class="pb-3 text-sm font-bold transition-colors"
+            :class="activeTab === 'description' ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-400 hover:text-gray-600'">
+            Description
+           </button>
+           <button 
+            @click="activeTab = 'discussion'"
+            class="pb-3 text-sm font-bold transition-colors"
+            :class="activeTab === 'discussion' ? 'border-b-2 border-gray-900 text-gray-900' : 'text-gray-400 hover:text-gray-600'">
+            Discussion
+           </button>
         </div>
+      </div>
 
-        <div v-show="activeTab === 'discussion'">
-            <div class="mb-6">
-                 <div v-if="auth.user" class="flex gap-2">
-                     <input 
-                       v-model="newComment"
-                       @keyup.enter="postComment"
-                       type="text" 
-                       placeholder="Ask a question or share a hint..." 
-                       class="flex-grow border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-                     />
-                     <button @click="postComment" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700">Post</button>
-                 </div>
-                 <div v-else class="bg-gray-50 p-3 rounded text-center text-sm text-gray-500">
-                     <router-link to="/login" class="text-blue-600 hover:underline">Log in</router-link> to join the discussion.
-                 </div>
+      <!-- Scrollable Content -->
+      <div class="flex-grow overflow-y-auto px-6 py-6 custom-scrollbar">
+        <div v-if="question">
+            <div v-show="activeTab === 'description'">
+                <!-- Main Description using Typography Plugin -->
+                <div class="prose prose-sm max-w-none text-gray-800 problem-content" v-html="renderedContent"></div>
+                
+                <!-- Explicit Sample Cases Cards -->
+                <div v-if="question.samples && question.samples.length > 0" class="mt-8">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide mb-4">Sample Test Cases</h3>
+                    
+                    <div v-for="(sample, idx) in question.samples" :key="idx" class="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+                        <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 text-xs font-bold text-gray-500">
+                            Sample #{{ idx + 1 }}
+                        </div>
+                        <div class="p-4 grid gap-4">
+                            <div>
+                                <div class="text-xs font-bold text-gray-400 uppercase mb-1">Input</div>
+                                <div class="bg-gray-100 p-3 rounded font-mono text-sm text-gray-800 whitespace-pre-wrap">{{ sample.input_data }}</div>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-gray-400 uppercase mb-1">Output</div>
+                                <div class="bg-gray-100 p-3 rounded font-mono text-sm text-gray-800 whitespace-pre-wrap">{{ sample.output_data }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="space-y-4">
-                <div v-if="comments.length === 0" class="text-center text-gray-400 py-10 text-sm">No comments yet. Be the first!</div>
-                <div v-for="c in comments" :key="c.id" class="flex gap-3">
-                    <div class="flex-shrink-0 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-xs font-bold text-gray-600 uppercase">
-                        {{ c.email ? c.email[0] : 'U' }}
-                    </div>
-                    <div class="flex-grow bg-gray-50 rounded-lg p-3">
-                         <div class="flex items-center justify-between mb-1">
-                             <span class="text-xs font-bold text-gray-900">{{ c.email }}</span>
-                             <span class="text-xs text-gray-500">{{ new Date(c.created_at).toLocaleDateString() }}</span>
-                         </div>
-                         <p class="text-sm text-gray-800">{{ c.content }}</p>
+            <div v-show="activeTab === 'discussion'">
+                <!-- Discussion UI (Same as before) -->
+                <div class="mb-6">
+                     <div v-if="auth.user" class="flex gap-2">
+                         <input 
+                           v-model="newComment"
+                           @keyup.enter="postComment"
+                           type="text" 
+                           placeholder="Ask a question or share a hint..." 
+                           class="flex-grow border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                         />
+                         <button @click="postComment" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700">Post</button>
+                     </div>
+                     <div v-else class="bg-gray-50 p-3 rounded text-center text-sm text-gray-500">
+                         <router-link to="/login" class="text-blue-600 hover:underline">Log in</router-link> to join the discussion.
+                     </div>
+                </div>
+                <div class="space-y-4">
+                    <div v-if="comments.length === 0" class="text-center text-gray-400 py-10 text-sm">No comments yet. Be the first!</div>
+                    <div v-for="c in comments" :key="c.id" class="flex gap-3">
+                        <div class="flex-shrink-0 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-xs font-bold text-gray-600 uppercase">
+                            {{ c.email ? c.email[0] : 'U' }}
+                        </div>
+                        <div class="flex-grow bg-gray-50 rounded-lg p-3">
+                             <div class="flex items-center justify-between mb-1">
+                                 <span class="text-xs font-bold text-gray-900">{{ c.email }}</span>
+                                 <span class="text-xs text-gray-500">{{ new Date(c.created_at).toLocaleDateString() }}</span>
+                             </div>
+                             <p class="text-sm text-gray-800">{{ c.content }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div v-else class="flex h-full items-center justify-center text-gray-500">
+            <span class="animate-pulse">Loading problem...</span>
+        </div>
       </div>
-      <div v-else class="text-center mt-10 text-gray-500">Loading problem...</div>
     </div>
 
     <!-- Right Panel: Code Editor -->
-    <div class="w-full md:w-1/2 flex flex-col bg-gray-900">
-      <div class="flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700">
-        <select v-model="selectedLang" class="bg-gray-700 text-white rounded px-2 py-1 text-sm outline-none border border-gray-600">
+    <div class="w-full md:w-1/2 flex flex-col bg-[#1e1e1e] border-l border-gray-800">
+      <div class="flex items-center justify-between px-4 py-2 bg-[#252526] border-b border-[#333]">
+        <select v-model="selectedLang" class="bg-[#3c3c3c] text-gray-200 rounded px-3 py-1 text-sm outline-none border border-[#333] hover:border-[#555]">
           <option value="c">C</option>
           <option value="cpp">C++</option>
           <option value="java">Java</option>
           <option value="python">Python</option>
         </select>
-        <button 
-          @click="getHint"
-          :disabled="executing"
-          class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-1 rounded text-sm font-bold flex items-center gap-2 disabled:opacity-50 mr-2">
-          <span>💡 Ask AI</span>
-        </button>
-        <button 
-          @click="runCode"
-          :disabled="executing"
-          class="bg-gray-600 hover:bg-gray-500 text-white px-4 py-1 rounded text-sm font-bold flex items-center gap-2 disabled:opacity-50 mr-2">
-          <span>▶ Run Sample</span>
-        </button>
-        <button 
-          @click="submitCode"
-          :disabled="executing"
-          class="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded text-sm font-bold flex items-center gap-2 disabled:opacity-50">
-          <span v-if="executing">Judging...</span>
-          <span v-else>✔ Submit</span>
-        </button>
+        <div class="flex gap-2">
+            <button 
+              @click="getHint"
+              :disabled="executing"
+              class="text-purple-400 hover:text-purple-300 px-3 py-1 rounded text-sm font-medium flex items-center gap-1 disabled:opacity-50">
+              <span>💡 Ask AI</span>
+            </button>
+            <div class="h-6 w-px bg-[#333] mx-1"></div>
+            <button 
+              @click="runCode"
+              :disabled="executing"
+              class="text-gray-400 hover:text-white px-3 py-1 rounded text-sm font-medium flex items-center gap-1 disabled:opacity-50">
+              <span>▶ Run Sample</span>
+            </button>
+            <button 
+              @click="submitCode"
+              :disabled="executing"
+              class="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded text-sm font-bold flex items-center gap-2 disabled:opacity-50 transition-colors">
+              <span v-if="executing">Judging...</span>
+              <span v-else>Submit</span>
+            </button>
+        </div>
       </div>
       
-      <div class="flex-grow">
+      <div class="flex-grow relative">
         <CodeEditor 
           v-model="userCode" 
           :language="selectedLang === 'c' || selectedLang === 'cpp' ? 'cpp' : selectedLang" 
@@ -292,28 +330,65 @@ const submitCode = async () => {
       </div>
 
       <!-- Terminal / Output -->
-      <div class="h-48 bg-black text-gray-300 p-4 font-mono text-sm overflow-y-auto border-t border-gray-700">
-        <div class="font-bold text-gray-500 mb-2 uppercase text-xs tracking-wider">Console Output</div>
-        <pre class="whitespace-pre-wrap">{{ outputLog }}</pre>
+      <div class="h-1/4 bg-[#1e1e1e] text-gray-300 font-mono text-sm border-t border-[#333] flex flex-col">
+        <div class="px-4 py-2 bg-[#252526] text-xs font-bold text-gray-500 uppercase flex justify-between">
+            <span>Console Output</span>
+            <button v-if="outputLog" @click="outputLog = ''" class="hover:text-gray-300">Clear</button>
+        </div>
+        <div class="p-4 overflow-y-auto custom-scrollbar flex-grow">
+             <pre v-if="outputLog" class="whitespace-pre-wrap">{{ outputLog }}</pre>
+             <div v-else class="text-gray-600 italic">Run code to see output...</div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-<style>
-/* Custom Scrollbar for Editor Part */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+<style scoped>
+/* Custom Typography Overrides for Markdown */
+.problem-content :deep(h1), 
+.problem-content :deep(h2), 
+.problem-content :deep(h3) {
+    color: #111827;
+    font-weight: 700;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
 }
-::-webkit-scrollbar-track {
-  background: #f1f1f1; 
+
+.problem-content :deep(h1) { font-size: 1.5rem; }
+.problem-content :deep(h2) { font-size: 1.25rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25em; }
+.problem-content :deep(pre) {
+    background-color: #f3f4f6;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    overflow-x: auto;
 }
-::-webkit-scrollbar-thumb {
-  background: #888; 
-  border-radius: 4px;
+.problem-content :deep(code) {
+    background-color: #f3f4f6;
+    padding: 0.2em 0.4em;
+    border-radius: 0.25em;
+    color: #ef4444;
+    font-size: 0.875em;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+.problem-content :deep(pre) :deep(code) {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent; 
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1; 
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; 
 }
 </style>

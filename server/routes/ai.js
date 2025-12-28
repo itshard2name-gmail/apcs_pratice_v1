@@ -39,8 +39,9 @@ router.post('/hint', authenticateToken, async (req, res) => {
         Current Student Code (${language}):
         ${code}
 
+        Output must be in Traditional Chinese (Taiwan).
         Task:
-        Provide a helpful HINT to guide the student. 
+        Provide a helpful HINT to guide the student in Traditional Chinese. 
         - Do NOT give the full solution.
         - Do NOT write the code for them.
         - Point out syntax errors, logic flaws, or edge cases they might have missed.
@@ -74,6 +75,7 @@ router.post('/generate-question', authenticateToken, async (req, res) => {
     try {
         const prompt = `
         Generate 1 APCS (Advanced Placement Computer Science) concept question about "${topic}".
+        The content MUST be in Traditional Chinese (繁體中文).
         
         Output STRICT JSON format matching this schema:
         {
@@ -107,6 +109,7 @@ router.post('/generate-implementation', authenticateToken, async (req, res) => {
     try {
         const prompt = `
         Generate 1 APCS (Advanced Placement Computer Science) coding problem about "${topic}".
+        The content MUST be in Traditional Chinese (繁體中文).
         
         Output STRICT JSON format matching this schema:
         {
@@ -168,6 +171,7 @@ router.post('/generate-batch', authenticateToken, async (req, res) => {
 
         const prompt = `
         ${promptContext}
+        The content MUST be in Traditional Chinese (繁體中文).
         
         Output STRICT JSON format as a LIST (Array) of objects.
         Each object must match this schema:
@@ -238,6 +242,7 @@ router.post('/generate-implementation-batch', authenticateToken, async (req, res
 
         const prompt = `
         ${promptContext}
+        The content MUST be in Traditional Chinese (繁體中文).
         
         Output STRICT JSON format as a LIST (Array) of objects.
         Each object must match this schema:

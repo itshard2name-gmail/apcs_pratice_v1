@@ -282,3 +282,14 @@ Enhance the user experience of the "Coding Problems" interface (`ProblemView.vue
 - **Manual Test**:
     - Verify layout on different screen sizes.
     - Verify editor responsiveness.
+
+## 12. Phase 14: Content Localization (Traditional Chinese)
+### Goal
+Ensure all AI-generated content (Concepts & Problems) aligns with the Taiwan APCS exam language (Traditional Chinese).
+
+### Changes
+#### Server
+- `server/routes/ai.js`:
+    - Update system prompts to explicitly request "Traditional Chinese (繁體中文)".
+    - "You are a specialized APCS tutor in Taiwan..."
+    - "Output must be in Traditional Chinese (Taiwan user locale)."

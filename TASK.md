@@ -61,7 +61,9 @@
     - [x] Backend: Bulk Generate Impl API (`/api/ai/generate-implementation-batch`) <!-- id: 134 -->
     - [x] Frontend: Bulk Generate UI in `AdminProblem.vue` <!-- id: 135 -->
     - [ ] (Deferred) PDF Text Parsing <!-- id: 131 -->
-- [ ] Phase 13: UI Optimization - Coding Problems <!-- id: 140 -->
-    - [ ] Design Refinement (Split Layout?) <!-- id: 141 -->
-    - [ ] Editor Enhancements <!-- id: 142 -->
+- [x] Phase 13: UI Optimization - Coding Problems <!-- id: 140 -->
+    - [x] Design Refinement (Header metadata, Card-based Samples) <!-- id: 141 -->
+    - [x] Editor Enhancements (Layout split) <!-- id: 142 -->
+- [x] Phase 14: Content Localization (Traditional Chinese) <!-- id: 150 -->
+    - [x] Update AI Prompts in `server/routes/ai.js` <!-- id: 151 -->
 
