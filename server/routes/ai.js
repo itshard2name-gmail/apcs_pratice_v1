@@ -125,6 +125,7 @@ router.post('/generate-implementation', authenticateToken, async (req, res) => {
         Output STRICT JSON format matching this schema:
         {
           "title": "Problem Title",
+          "difficulty": 1,
           "description": "# Problem Description\\nWrite a program...\\n\\n## Input\\n...\\n\\n## Output\\n...",
           "test_cases": [
             { "input": "1 2", "output": "3", "is_sample": true },
@@ -242,13 +243,18 @@ router.post('/generate-implementation-batch', authenticateToken, async (req, res
         3: "Advanced Intermediate (APCS 中高級)",
         4: "Advanced (APCS 高級)"
     };
-    const diffDesc = levels[difficulty] || levels[1];
+
+    // Handle Random (0 or undefined)
+    let diffContext = "Difficulty: Mixed/Random (Select appropriate difficulty 1-4 for each problem based on complexity).";
+    if (difficulty && levels[difficulty]) {
+        diffContext = `Difficulty: ${levels[difficulty]}.`;
+    }
 
     try {
         let promptContext = "";
 
         if (topic) {
-            promptContext = `Generate ${count} APCS (Advanced Placement Computer Science) coding problems about "${topic}". Difficulty: ${diffDesc}.`;
+            promptContext = `Generate ${count} APCS (Advanced Placement Computer Science) coding problems about "${topic}". ${diffContext}`;
         } else {
             // Randomly select topics
             const selectedTopics = [];
@@ -268,6 +274,7 @@ router.post('/generate-implementation-batch', authenticateToken, async (req, res
         Each object must match this schema:
         {
           "title": "Problem Title",
+          "difficulty": 1,
           "description": "# Problem Description\\nWrite a program...\\n\\n## Input\\n...\\n\\n## Output\\n...",
           "test_cases": [
             { "input": "...", "output": "...", "is_sample": true }

@@ -137,8 +137,10 @@ const saveFromBatch = async (index) => {
         const { saved, error, ...questionData } = item
         const payload = {
             ...questionData,
+            ...questionData,
             time_limit: questionData.time_limit || 1000,
-            memory_limit: questionData.memory_limit || 256
+            memory_limit: questionData.memory_limit || 256,
+            difficulty: questionData.difficulty || 1 // Use AI projected difficulty or default
         }
         
         const res = await fetch('/api/questions/implementation', {
@@ -164,8 +166,9 @@ const fillFormFromBatch = (index) => {
         title: questionData.title || '',
         description: questionData.description || '',
         time_limit: questionData.time_limit || 1000,
+        time_limit: questionData.time_limit || 1000,
         memory_limit: questionData.memory_limit || 256,
-        difficulty: 1, // Default to 1 if not present, though batch usually won't have it unless prompted in description
+        difficulty: questionData.difficulty || 1,
         test_cases: questionData.test_cases || []
     }
     message.value = 'Loaded problem from batch list.'
@@ -284,6 +287,7 @@ const submit = async () => {
                 <div class="mb-4">
                     <label class="block text-sm font-bold mb-1">Difficulty</label>
                      <select v-model="bulkConfig.difficulty" class="w-full border p-2 rounded">
+                        <option :value="0">🎲 Random (Mixed)</option>
                         <option :value="1">Basic (初級)</option>
                         <option :value="2">Intermediate (中級)</option>
                         <option :value="3">Adv. Inter (中高級)</option>
@@ -325,8 +329,9 @@ const submit = async () => {
                     </div>
                     <!-- Show first 2 lines of description as preview -->
                     <p class="text-sm text-gray-600 line-clamp-2">{{ q.description?.split('\n').slice(0, 3).join(' ') }}...</p>
-                    <div class="mt-2 text-xs text-gray-500">
-                        Test Cases: {{ q.test_cases?.length || 0 }} included.
+                    <div class="mt-2 text-xs text-gray-500 flex gap-4">
+                        <span>Test Cases: {{ q.test_cases?.length || 0 }}</span>
+                        <span class="font-bold text-indigo-600">Level: {{ q.difficulty || '?' }}</span>
                     </div>
                 </div>
                 <div class="flex flex-col gap-2 ml-4">
