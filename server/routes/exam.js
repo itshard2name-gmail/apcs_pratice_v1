@@ -6,9 +6,22 @@ const { authenticateToken } = require('../middleware/auth');
 // Generate a Mock Exam Paper
 router.get('/paper', authenticateToken, async (req, res) => {
     try {
-        // MVP: Fetch random 5 Concept + 1 Implementation
-        const conceptRes = await db.query('SELECT * FROM questions_concept ORDER BY RANDOM() LIMIT 5');
-        const codingRes = await db.query('SELECT * FROM questions_implementation ORDER BY RANDOM() LIMIT 1');
+        // MVP: Fetch random 30 Concept + 3 Implementation
+        const difficulty = req.query.difficulty ? parseInt(req.query.difficulty) : null;
+
+        const conceptRes = await db.query('SELECT * FROM questions_concept ORDER BY RANDOM() LIMIT 30');
+
+        let codingQuery = 'SELECT * FROM questions_implementation';
+        const codingParams = [];
+
+        if (difficulty && difficulty >= 1 && difficulty <= 4) {
+            codingQuery += ' WHERE difficulty = $1';
+            codingParams.push(difficulty);
+        }
+
+        codingQuery += ' ORDER BY RANDOM() LIMIT 3';
+
+        const codingRes = await db.query(codingQuery, codingParams);
 
         res.json({
             id: Date.now(),

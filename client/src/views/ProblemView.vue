@@ -88,14 +88,21 @@ const postComment = async () => {
 }
 
 onMounted(async () => {
-    // Restore preference
+    // Language Prioritization: URL > LocalStorage > Default
+    const queryLang = route.query.lang
     const savedLang = localStorage.getItem(PREF_KEY)
-    if (savedLang && ['c', 'cpp', 'java', 'python'].includes(savedLang)) {
-        selectedLang.value = savedLang
-        // Also update code if it was default
-        if (templates[savedLang]) {
-            userCode.value = templates[savedLang]
-        }
+    
+    let targetLang = 'c' // Default
+
+    if (queryLang && ['c', 'cpp', 'java', 'python'].includes(queryLang)) {
+        targetLang = queryLang
+    } else if (savedLang && ['c', 'cpp', 'java', 'python'].includes(savedLang)) {
+        targetLang = savedLang
+    }
+
+    selectedLang.value = targetLang
+    if (templates[targetLang]) {
+        userCode.value = templates[targetLang]
     }
 
   const id = route.params.id
