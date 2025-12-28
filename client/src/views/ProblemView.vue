@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import markdownit from 'markdown-it'
 import hljs from 'highlight.js'
@@ -11,7 +11,7 @@ const auth = useAuthStore()
 
 const route = useRoute()
 const question = ref(null)
-const userCode = ref('// Write your code here\n#include <stdio.h>\n\nint main() {\n    printf("Hello World");\n    return 0;\n}')
+// userCode declaration removed from here
 const outputLog = ref('')
 const selectedLang = ref('c')
 const executing = ref(false)
@@ -22,8 +22,6 @@ const templates = {
     java: `import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner s = new Scanner(System.in);\n        if (s.hasNext()) {\n            System.out.println(s.next());\n        }\n    }\n}`,
     python: `# Write your code here\nimport sys\n\nfor line in sys.stdin:\n    print(line.strip())`
 }
-
-import { watch } from 'vue'
 
 const userCode = ref(templates.c)
 
