@@ -58,6 +58,23 @@ This platform provides an all-in-one environment for students to practice **Conc
     ```
     Visit `http://localhost:5173`.
 
+### Development with Docker (Hybrid/Full)
+**Option A: Hybrid (Recommended)**
+Run **Development DB** in Docker, code locally.
+```bash
+docker-compose -f docker-compose.dev.yml up -d db
+# Then run backend and frontend locally as above
+```
+
+**Option B: Full Docker Dev**
+Run everything in Docker with Hot Reload.
+```bash
+docker-compose -f docker-compose.dev.yml up --build
+```
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:3000`
+- API Key: Set `GEMINI_API_KEY` in `.env` or export it before running.
+
 ### Production Deployment
 Run the entire stack with Docker Compose:
 ```bash
@@ -69,6 +86,7 @@ Access the app at `http://localhost:8080`.
 *   [**User Manual**](./USER_MANUAL.md): Comprehensive guide for Students and Admins.
 *   [**Implementation Plan**](./IMPLEMENTATION_PLAN.md): Technical requirements and architecture.
 *   [**Task List**](./TASK.md): Development progress tracker.
+*   [**System Design**](./SYSTEM_DESIGN.md): Architecture and Dev Guidelines.
 *   [**Walkthrough**](./WALKTHROUGH.md): Detailed feature verification steps.
 
 ## 📄 License
