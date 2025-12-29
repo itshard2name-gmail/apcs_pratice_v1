@@ -84,4 +84,5 @@
     - [x] Fix Admin Navigation (Cancel Button Redirects) <!-- id: 192 -->
     - [x] Improve Student Navigation (My Dashboard Link) <!-- id: 193 -->
     - [x] Security: Implement RBAC for Admin Routes <!-- id: 194 -->
+    - [x] Security: Implement AI Rate Limiting (Backend + Frontend) <!-- id: 195 -->
 
