@@ -3,6 +3,7 @@
 import { RouterView } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 import { useRouter, useRoute } from 'vue-router'
+import { ref } from 'vue'
 
 const auth = useAuthStore()
 const router = useRouter()
