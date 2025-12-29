@@ -15,6 +15,9 @@ const outputLog = ref('')
 const selectedLang = ref('c')
 const executing = ref(false)
 const showOutput = ref(false)
+const hintCooldown = ref(0)
+let cooldownTimer = null
+
 
 const templates = {
     c: `#include <stdio.h>\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf("%d\\n", a + b);\n    return 0;\n}`,
@@ -139,12 +142,29 @@ const runCode = async () => {
   }
 }
 
+
+
+const startCooldown = (seconds) => {
+    hintCooldown.value = seconds
+    if (cooldownTimer) clearInterval(cooldownTimer)
+    
+    cooldownTimer = setInterval(() => {
+        hintCooldown.value--
+        if (hintCooldown.value <= 0) {
+            clearInterval(cooldownTimer)
+            hintCooldown.value = 0
+        }
+    }, 1000)
+}
+
 const getHint = async () => {
     if (!auth.user) {
         alert('Please login to use AI Tutor.')
         return
     }
     
+    if (hintCooldown.value > 0) return
+
     executing.value = true
     showOutput.value = true
     outputLog.value = 'Asking AI Tutor...\n'
@@ -162,10 +182,18 @@ const getHint = async () => {
                 problemDescription: question.value.description
             })
         })
+        
+        if (res.status === 429) {
+             const err = await res.json()
+             outputLog.value = `⚠️ Limit Reached: ${err.error}`
+             return
+        }
+
         const result = await res.json()
         if (result.error) throw new Error(result.error)
         
         outputLog.value = `💡 AI Hint:\n${result.hint}`
+        startCooldown(60) // Start 60s cooldown on success
     } catch (e) {
         outputLog.value = 'AI Error: ' + e.message
     } finally {
@@ -337,10 +365,10 @@ const submitCode = async () => {
         <div class="flex items-center gap-3">
             <button 
               @click="getHint"
-              :disabled="executing"
+              :disabled="executing || hintCooldown > 0"
               class="text-purple-400 hover:text-purple-300 px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 disabled:opacity-50 transition-colors hover:bg-purple-500/10">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-              <span>AI Hint</span>
+              <span>{{ hintCooldown > 0 ? `Wait ${hintCooldown}s` : 'AI Hint' }}</span>
             </button>
             <div class="h-6 w-px bg-[#333]"></div>
             <button 

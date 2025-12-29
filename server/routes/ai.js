@@ -13,7 +13,38 @@ const model = genAI.getGenerativeModel({
     generationConfig: { responseMimeType: "application/json" }
 });
 
-router.post('/hint', authenticateToken, async (req, res) => {
+// Rate Limiting (Simple In-Memory)
+const userHintUsage = new Map(); // userId -> [timestamps]
+const RATE_LIMIT_WINDOW = 10 * 60 * 1000; // 10 minutes
+const MAX_HINTS_PER_WINDOW = 5;
+
+const rateLimitHints = (req, res, next) => {
+    const userId = req.user.id;
+    const now = Date.now();
+
+    if (!userHintUsage.has(userId)) {
+        userHintUsage.set(userId, []);
+    }
+
+    const usage = userHintUsage.get(userId);
+    // Filter out old timestamps
+    const validTimestamps = usage.filter(t => now - t < RATE_LIMIT_WINDOW);
+
+    if (validTimestamps.length >= MAX_HINTS_PER_WINDOW) {
+        // Update cleanup (optimization)
+        userHintUsage.set(userId, validTimestamps);
+        return res.status(429).json({
+            error: `Rate limit exceeded. Max ${MAX_HINTS_PER_WINDOW} hints per 10 mins.`
+        });
+    }
+
+    // Add current request
+    validTimestamps.push(now);
+    userHintUsage.set(userId, validTimestamps);
+    next();
+};
+
+router.post('/hint', authenticateToken, rateLimitHints, async (req, res) => {
     console.log("AI Request received.");
 
     const { code, language, problemTitle, problemDescription } = req.body;
