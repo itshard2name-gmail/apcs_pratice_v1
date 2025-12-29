@@ -8,9 +8,10 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   server: {
+    port: parseInt(process.env.APCS_PRATICE_FRONTEND_PORT) || 3010,
     proxy: {
       '/api': {
-        target: process.env.VITE_API_TARGET || 'http://localhost:3000',
+        target: `http://localhost:${process.env.APCS_PRATICE_BACKEND_PORT || 3011}`,
         changeOrigin: true,
       }
     }

@@ -8,9 +8,9 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: apcs_db
     ports:
-      - "5434:5432"
+      - "${APCS_PRATICE_STG_DB_PORT:-5434}:5432"
     volumes:
-      - postgres_demo_data:/var/lib/postgresql/data
+      - postgres_stage_data:/var/lib/postgresql/data
       - ./server/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
       - ./server/seed.sql:/docker-entrypoint-initdb.d/2-seed.sql
     restart: always
@@ -24,11 +24,11 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=apcs_db
       - POSTGRES_PORT=5432
-      - JWT_SECRET=apcs-demo-secret
+      - JWT_SECRET=apcs-stage-secret
     env_file:
       - ./server/.env
     ports:
-      - "3001:3000"
+      - "${APCS_PRATICE_STG_BACKEND_PORT:-3051}:3000"
     depends_on:
       - db
     restart: always
@@ -36,7 +36,7 @@ services:
   frontend:
     build: ./client
     ports:
-      - "8081:80"
+      - "${APCS_PRATICE_STG_FRONTEND_PORT:-3050}:80"
     depends_on:
       - backend
     restart: always
@@ -49,4 +49,4 @@ services:
       - frontend
 
 volumes:
-  postgres_demo_data:
+  postgres_stage_data:

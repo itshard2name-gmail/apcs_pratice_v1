@@ -1,19 +1,25 @@
 #!/bin/bash
 
 # Configuration
-COMPOSE_FILE="docker-compose.demo.yml"
-PROJECT_NAME="apcs_demo"
+COMPOSE_FILE="docker-compose.stage.yml"
+PROJECT_NAME="apcs_stage"
 
 echo "---------------------------------------------------"
-echo "🚀 Starting APCS Platform Local Demo with Cloudflare"
+echo "🚀 Starting APCS Platform Local Stage with Cloudflare"
 echo "---------------------------------------------------"
+
+# Load Environment Variables from .envrc
+if [ -f ".envrc" ]; then
+    echo "Loading environment variables from .envrc..."
+    source .envrc
+fi
 
 # 1. Stop existing containers to ensure a fresh start or update
-echo "Stopping any existing demo containers..."
+echo "Stopping any existing stage containers..."
 docker compose -f $COMPOSE_FILE -p $PROJECT_NAME down --remove-orphans
 
 # 2. Start the stack
-echo "Building and starting demo stack..."
+echo "Building and starting stage stack..."
 # Ensure server/.env exists or warn
 if [ ! -f "server/.env" ]; then
     echo "⚠️  WARNING: server/.env file not found. Gemini API features may not work."
