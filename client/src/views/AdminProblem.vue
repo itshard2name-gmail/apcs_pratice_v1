@@ -213,9 +213,10 @@ const submit = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#1A1A1A] py-12 px-4 sm:px-6 lg:px-8">
+
+  <div class="min-h-screen bg-[#1A1A1A] py-12">
      <!-- Header -->
-     <header class="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+     <header class="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div>
             <h1 class="text-3xl font-bold text-white">Problem Admin</h1>
             <p class="text-gray-400 mt-1">Manage coding challenges and test cases.</p>
@@ -238,7 +239,7 @@ const submit = async () => {
         </div>
      </header>
 
-     <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+     <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 px-4 sm:px-6 lg:px-8">
         
         <!-- Main Edit Form (Left 2/3) -->
         <div class="lg:col-span-2 space-y-8">
