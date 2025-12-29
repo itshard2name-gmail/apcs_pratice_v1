@@ -43,7 +43,7 @@ const handleLogin = async () => {
         <div class="text-center lg:text-left">
           <h2 class="mt-6 text-3xl font-bold tracking-tight text-white">Sign in to APCS Practice</h2>
           <p class="mt-2 text-sm text-gray-400">
-            Or <router-link to="/register" class="font-medium text-teal-400 hover:text-teal-300">start your 14-day free trial</router-link>
+            Or <router-link to="/register" class="font-medium text-teal-400 hover:text-teal-300">create a new account</router-link>
           </p>
         </div>
 

@@ -3,6 +3,8 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import markdownit from 'markdown-it'
 import hljs from 'highlight.js'
+import markdownItKatex from 'markdown-it-katex'
+import 'katex/dist/katex.min.css'
 import CodeEditor from '../components/CodeEditor.vue'
 import { useAuthStore } from '../stores/auth'
 import 'highlight.js/styles/github.css'
@@ -44,6 +46,9 @@ const comments = ref([])
 const newComment = ref('')
 
 const md = markdownit({
+  html: true,
+  linkify: true,
+  typographer: true,
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
       try {
@@ -53,6 +58,8 @@ const md = markdownit({
     return ''; // use external default escaping
   }
 })
+
+md.use(markdownItKatex)
 
 const renderedContent = computed(() => {
   if (!question.value) return ''
@@ -200,6 +207,8 @@ const getHint = async () => {
         executing.value = false
     }
 }
+
+const isExamMode = computed(() => route.query.mode === 'exam')
 
 const submitCode = async () => {
   if (!auth.user) {
@@ -364,19 +373,20 @@ const submitCode = async () => {
 
         <div class="flex items-center gap-3">
             <button 
+              v-if="!isExamMode"
               @click="getHint"
               :disabled="executing || hintCooldown > 0"
               class="text-purple-400 hover:text-purple-300 px-3 py-1.5 rounded text-sm font-medium flex items-center gap-2 disabled:opacity-50 transition-colors hover:bg-purple-500/10">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
               <span>{{ hintCooldown > 0 ? `Wait ${hintCooldown}s` : 'AI Hint' }}</span>
             </button>
-            <div class="h-6 w-px bg-[#333]"></div>
+            <div class="h-6 w-px bg-[#333]" v-if="!isExamMode"></div>
             <button 
               @click="runCode"
               :disabled="executing"
               class="text-green-500 hover:text-green-400 px-3 py-1.5 rounded text-sm font-bold flex items-center gap-2 disabled:opacity-50 transition-colors hover:bg-green-500/10">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>
-              <span>Run Sample</span>
+              <span>Test Run</span>
             </button>
             <button 
               @click="submitCode"

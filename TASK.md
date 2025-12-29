@@ -59,6 +59,8 @@
     - [x] Fix Judge System Docker-in-Docker (ENOENT & Volume Mounts) <!-- id: 126 -->
     - [x] Standardize Docker Envs (apcs_dev VS apcs_stage) <!-- id: 127 -->
     - [x] Secure .envrc <!-- id: 128 -->
+    - [x] Fix Math Rendering in Coding Problems (LaTeX/KaTeX) <!-- id: 129 -->
+    - [x] UI Refinement: Hide AI Hint in Exam Mode & Rename 'Run Sample' to 'Test Run' <!-- id: 130 -->
 - [x] Question Bank LLM Integration <!-- id: 130 -->
     - [x] Backend: Bulk Generate API (`/api/ai/generate-batch`) <!-- id: 132 -->
     - [x] Frontend: Bulk Generate UI in `AdminConcept.vue` <!-- id: 133 -->
